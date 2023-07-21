@@ -92,8 +92,8 @@ void filterUpdate(double dt, double enc_diff) {
 #define INTEGRAL_DECAY 0.01
 
 double PID_P = 100.0;
-double PID_I = 100.0;  //0.25
-double PID_D = 0.0;  //0.30
+double PID_I = 100.0; 
+double PID_D = 0.0; 
 double PID_FF = 1.0; 
 
 double integral = 0.0;
@@ -107,9 +107,13 @@ int motor_cmd = 0;
 void pidUpdate(double dt) {
   if (abs(vel_target) > 0) {
     diff = (vel_target) - (state(1) * (WHEEL_DIAMETER / 2.0));
+
     derivative = diff / dt;
     integral += diff * dt;  // TODO: incorporate decay into this term
-    feed_forward = 177 * vel_target - 74; // calculated experimentally
+
+    feed_forward = 23 * exp(1.5 * abs(vel_target)); // calculated experimentally
+    feed_forward = (vel_target / abs(vel_target)) * feed_forward; // match sign with vel_target
+
     motor_cmd = ((PID_FF * feed_forward) + (PID_P * diff) + (PID_I * integral) + (PID_D * derivative));
     motor_cmd = (motor_cmd / abs(motor_cmd)) * min(PWM_MAX, abs(motor_cmd));  // upper bound
   } else {
@@ -119,7 +123,6 @@ void pidUpdate(double dt) {
   driveMotor(motor_cmd);
 }
 
-// TODO: add filtering to disallow 
 void driveMotor(int motor_cmd) {
   // stop motor if motor cmd too low
   if (abs(motor_cmd) <= PWM_MIN) {
@@ -128,11 +131,11 @@ void driveMotor(int motor_cmd) {
   } else if (motor_cmd > 0) {
     digitalWrite(MOTOR_IN1, HIGH);
     digitalWrite(MOTOR_IN2, LOW);
-    analogWrite(MOTOR_PWM, motor_cmd);
+    analogWrite(MOTOR_PWM, abs(motor_cmd));
   } else if (motor_cmd < 0) {
     digitalWrite(MOTOR_IN1, LOW);
     digitalWrite(MOTOR_IN2, HIGH);
-    analogWrite(MOTOR_PWM, motor_cmd);
+    analogWrite(MOTOR_PWM, abs(motor_cmd));
   }
 }
 
@@ -151,7 +154,6 @@ void parseInput() {
     } else if (cmd.charAt(0) == 'd') {
       PID_D = cmd.substring(2).toFloat();
     } else if (cmd.charAt(0) == 'v') {
-      //integral = 0;
       vel_target = cmd.substring(2).toFloat();
     } else if (cmd.charAt(0) == 'm') {
       motor_cmd = cmd.substring(2).toInt();
@@ -203,6 +205,9 @@ void loop() {
 
     prev_enc = enc_count;
 
+    Serial.print("dt:");
+    Serial.print(dt);
+    Serial.print(" ");
     Serial.print("P:");
     Serial.print(PID_P);
     Serial.print(" ");
