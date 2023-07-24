@@ -2,8 +2,8 @@
 
 /*--- ENCODER ---*/
 
-#define MOTOR_ENCA 3
-#define MOTOR_ENCB 2
+#define MOTOR_ENCA 2
+#define MOTOR_ENCB 1
 #define TICKS_PER_REV 680.0
 
 // from experimentation, seems to have ~680 counts per revolution

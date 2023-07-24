@@ -1,5 +1,5 @@
-#define MOTOR_ENCA 3
-#define MOTOR_ENCB 2
+#define MOTOR_ENCA 2
+#define MOTOR_ENCB 1
 
 // from experimentation, seems to have ~680 counts per revolution
 volatile long enc_count = 0;

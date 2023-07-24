@@ -2,11 +2,11 @@
 
 /*--- MOTOR ENCODER ---*/
 
-#define MOTOR_IN1 8
-#define MOTOR_IN2 9
+#define MOTOR_IN1 3
+#define MOTOR_IN2 4
 #define MOTOR_PWM 5
-#define MOTOR_ENCA 3
-#define MOTOR_ENCB 2
+#define MOTOR_ENCA 2
+#define MOTOR_ENCB 1
 #define TICKS_PER_REV 680.0
 #define WHEEL_DIAMETER 0.068
 
@@ -111,7 +111,7 @@ void pidUpdate(double dt) {
     derivative = diff / dt;
     integral += diff * dt;  // TODO: incorporate decay into this term
 
-    feed_forward = 23 * exp(1.5 * abs(vel_target)); // calculated experimentally
+    feed_forward = 23 * exp(1.5 * abs(vel_target)); // calculated experimentally and fitted to exponential
     feed_forward = (vel_target / abs(vel_target)) * feed_forward; // match sign with vel_target
 
     motor_cmd = ((PID_FF * feed_forward) + (PID_P * diff) + (PID_I * integral) + (PID_D * derivative));

@@ -1,6 +1,6 @@
 // define wiring to arduino
-#define MOTOR_IN1 8
-#define MOTOR_IN2 9
+#define MOTOR_IN1 3
+#define MOTOR_IN2 4
 #define MOTOR_PWM 5
 
 // motor properties
