@@ -1,0 +1,161 @@
+<robot name="bentobot" xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+    <!-- gazebo integration -->
+
+    <xacro:include filename="$(find bentobot_description)/urdf/bentobot.gazebo"/>
+
+    <!-- xacro macros -->
+
+    <xacro:macro name="caster_part" params="name origin_xyz">
+        <collision name='${name}_collision'>
+            <origin xyz="${origin_xyz}" rpy="0 0 0"/>
+            <geometry>
+                <sphere radius="0.01"/>
+            </geometry>
+        </collision>
+    </xacro:macro>
+
+    <xacro:macro name="wheel" params="name origin_xyz mesh_xyz">
+        <link name="${name}">
+            <pose>0 0 0 0 0 0</pose>
+            <inertial>
+                <mass value="1"/>
+                <origin xyz="${origin_xyz}" rpy="0 0 0"/>
+                <inertia
+                    ixx="0.0003" ixy="0" ixz="0"
+                    iyy="0.0003" iyz="0"
+                    izz="0.0006"
+                />
+            </inertial>
+            <visual name="visual">
+                <origin xyz="${mesh_xyz}" rpy="0 1.5707 1.5707"/>
+                <geometry>
+                    <mesh filename="package://bentobot_description/urdf/meshes/bentobot-wheel.dae"/>
+                </geometry>
+            </visual>
+            <collision name="${name}_collision">
+                <origin xyz="${origin_xyz}" rpy="0 1.5707 1.5707"/>
+                <geometry>
+                    <cylinder radius="0.034" length="0.027"/>
+                </geometry>
+            </collision>
+        </link>
+    </xacro:macro>
+
+    <!-- root footprint link and joint -->
+
+    <link name="robot_footprint"></link>
+
+    <joint name="robot_footprint_joint" type="fixed">
+        <origin xyz="0 0 0" rpy="0 0 0" />
+        <parent link="robot_footprint"/>
+        <child link="chassis" />m
+    </joint>
+
+    <!-- chassis link -->
+
+    <link name="chassis">
+        <pose>0 0 0 0 0 0</pose>
+
+        <inertial>
+            <mass value="5"/>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <inertia
+                ixx="0.016" ixy="0" ixz="0"
+                iyy="0.021" iyz="0"
+                izz="0.019"
+            />
+        </inertial>
+
+        <visual>
+            <origin xyz="0 0 -0.065" rpy="0 0 -1.5707"/>
+            <material name="blue">
+                <color rgba="0.0 0.0 0.0 1.0"/>
+            </material>
+            <geometry>
+                <mesh filename="package://bentobot_description/urdf/meshes/robot-chassis.stl"/>
+            </geometry>
+        </visual>
+
+        <collision name="chassis_collision">
+            <origin xyz="0 0 0" rpy="0 0 0"/> 
+            <geometry>
+                <box size="0.17 0.13 0.14"/>
+            </geometry>
+        </collision>
+
+        <xacro:caster_part name="front_left_caster" origin_xyz="0.0575 0.0425 -0.075"/>
+        <xacro:caster_part name="front_right_caster" origin_xyz="0.0575 -0.0425 -0.075"/>
+        <xacro:caster_part name="back_left_caster" origin_xyz="-0.0575 0.0425 -0.075"/>
+        <xacro:caster_part name="back_right_caster" origin_xyz="-0.0575 -0.0425 -0.075"/>
+    </link>
+
+    <!-- wheel links and joints -->
+
+    <xacro:wheel name="left_wheel" origin_xyz="0 -0.0135 0" mesh_xyz="0 -0.027 0"/>
+    <xacro:wheel name="right_wheel" origin_xyz="0 0.0135 0" mesh_xyz="0 0 0"/>
+
+    <joint type="continuous" name="left_wheel_hinge">
+    <origin xyz="0 0.092 -0.0513" rpy="0 0 0"/>
+        <child link="left_wheel"/>
+        <parent link="chassis"/>
+        <axis xyz="0 1 0" rpy="0 0 0"/>
+        <limit effort="10000" velocity="10000"/>
+        <dynamics damping="1.0" friction="1.0"/>
+    </joint>
+
+    <joint type="continuous" name="right_wheel_hinge">
+        <origin xyz="0 -0.092 -0.0513" rpy="0 0 0"/>
+        <child link="right_wheel"/>
+        <parent link="chassis"/>
+        <axis xyz="0 1 0" rpy="0 0 0"/>
+        <limit effort="10000" velocity="10000"/>
+        <dynamics damping="1.0" friction="1.0"/>
+    </joint>
+
+    <!-- lidar link and joint -->
+
+    <link name="lidar">
+        <pose>0 0 0 0 0 0</pose>
+
+        <inertial>
+            <mass value="1e-5"/>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <inertia
+                ixx="1e-6" ixy="0" ixz="0"
+                iyy="1e-6" iyz="0"
+                izz="1e-6"
+            />
+        </inertial>
+
+        <visual>
+            <origin xyz="0 0 -0.0165" rpy="0 0 0"/>
+            <geometry>
+                <mesh filename="package://bentobot_description/urdf/meshes/lidar.stl"/>
+            </geometry>
+        </visual>
+
+        <collision name="lidar_collision">
+            <geometry>
+                <box size="0.039 0.039 0.033"/>
+            </geometry>
+        </collision>
+    </link>
+
+    <joint type="fixed" name="lidar_joint">
+        <origin xyz="0.06 0 0.0865" rpy="0 0 0"/>
+        <child link="lidar"/>
+        <parent link="chassis"/>
+        <axis xyz="0 1 0" rpy="0 0 0"/>
+    </joint>
+
+     <!-- Set link colors -->
+
+    <gazebo reference="chassis">
+        <material>Gazebo/DarkGrey</material>
+    </gazebo>
+
+    <gazebo reference="lidar">
+        <material>Gazebo/DarkGrey</material>
+    </gazebo>
+</robot>
