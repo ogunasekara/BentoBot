@@ -1,7 +1,7 @@
 // define wiring to arduino
-#define MOTOR_IN1 3
-#define MOTOR_IN2 4
-#define MOTOR_PWM 5
+#define MOTOR_IN1 6
+#define MOTOR_IN2 5
+#define MOTOR_PWM 7
 
 // motor properties
 #define MIN_PWM 0
@@ -42,10 +42,10 @@ void loop() {
 
   delay(2000);
 
-  // spin in other direction
-  digitalWrite(MOTOR_IN1, LOW);
-  digitalWrite(MOTOR_IN2, HIGH);
-  loopSpeeds();
+  // // spin in other direction
+  // digitalWrite(MOTOR_IN1, LOW);
+  // digitalWrite(MOTOR_IN2, HIGH);
+  // loopSpeeds();
 
-  delay(2000);
+  // delay(2000);
 }

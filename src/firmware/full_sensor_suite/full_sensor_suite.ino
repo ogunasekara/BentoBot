@@ -5,9 +5,9 @@
 
 /*--- IMU ---*/
 
-#define MPU_ROT_X_OFFSET 0.0494
-#define MPU_ROT_Y_OFFSET -0.0049
-#define MPU_ROT_Z_OFFSET 0.0132
+#define MPU_ROT_X_OFFSET 0.0582
+#define MPU_ROT_Y_OFFSET -0.0037
+#define MPU_ROT_Z_OFFSET 0.0461
 
 Adafruit_MPU6050 mpu;
 
@@ -29,12 +29,14 @@ void initializeIMU() {
 
 /*--- MOTOR ENCODERS ---*/
 
+// left motor
 #define MOTOR1_ENCA 11
 #define MOTOR1_ENCB 12
 #define MOTOR1_IN1 6
 #define MOTOR1_IN2 5
 #define MOTOR1_PWM 7
 
+// right motor
 #define MOTOR2_ENCA 10
 #define MOTOR2_ENCB 9
 #define MOTOR2_IN1 4
@@ -225,9 +227,9 @@ void loop() {
     // get IMU information
     mpu.getEvent(&a, &g, &temp);
 
-    Serial.print(lin_vel);
+    Serial.print(motor1_vel);
     Serial.print(" ");
-    Serial.print(ang_vel);
+    Serial.print(motor2_vel);
     Serial.print(" ");
     Serial.println(g.gyro.z + MPU_ROT_Z_OFFSET);
 

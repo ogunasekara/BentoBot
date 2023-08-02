@@ -29,7 +29,7 @@ void loop() {
   /* Get new sensor events with the readings */
   sensors_event_t a, g, temp;
   mpu.getEvent(&a, &g, &temp);
-  
+
   Serial.print("GyroX:");
   Serial.print(g.gyro.x + MPU_ROT_X_OFFSET);
   Serial.print(", ");
