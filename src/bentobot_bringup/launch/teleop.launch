@@ -1,0 +1,9 @@
+<launch>
+    <node name="joy" pkg="joy" type="joy_node"/>
+
+    <node name="mcu_bridge" pkg="bentobot_mcu_bridge" type="bentobot_mcu_bridge_node.py"/>
+
+    <node name="teleop" pkg="bentobot_teleop" type="bentobot_teleop_node.py"/>
+
+    <include file="$(find ldlidar_stl_ros)/launch/ld06.launch" />
+</launch>
