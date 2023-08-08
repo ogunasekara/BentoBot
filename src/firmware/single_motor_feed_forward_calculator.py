@@ -3,9 +3,9 @@ import threading
 import time
 import csv
 
-FILE_PREFIX = "12v"
+FILE_PREFIX = "right_wheel"
 
-ser = serial.Serial('/dev/tty.usbmodem1301', 115200, timeout=1)
+ser = serial.Serial('/dev/ttyACM0', 115200, timeout=1)
 data = [] # list of dicts, fields are motor_cmd, ang_vel
 
 #--- READING AND PARSING ---#
@@ -21,11 +21,10 @@ def read_serial():
     while True:
         try:
             line = ser.readline().decode()
-            measurements = parse_line(line)
+            measurement = parse_line(line)
 
-            if len(measurements) > 0:
-                vel_sum += measurements[7] # add target measurements
-                vel_cnt += 1
+            vel_sum += measurement # add target measurements
+            vel_cnt += 1
 
             #print(measurements)
         except UnicodeDecodeError:
@@ -37,15 +36,7 @@ read_thread.start()
 
 def parse_line(line):
     line = line.strip()
-    vals = line.split(' ')
-
-    if len(vals) < 8: 
-        return []
-
-    measurements = []
-    for val in vals:
-        measurements.append(float(val.split(':')[1]))
-    return measurements
+    return float(line)
 
 def reset_avg_vel():
     global vel_sum
@@ -63,12 +54,7 @@ def get_avg_vel():
 #--- COMMANDS ---#
 
 def set_motor_pwm(pwm):
-    s = 'm ' + str(pwm) + '\n'
-    ser.write(s.encode())
-    time.sleep(0.05)
-
-def set_target_vel(vel):
-    s = 'v ' + str(vel) + '\n'
+    s = str(pwm) + '\n'
     ser.write(s.encode())
     time.sleep(0.05)
 
@@ -85,9 +71,9 @@ def save_to_csv(filename, data):
 #--- MAIN LOOP ---#
 
 try:
-    FILE_PREFIX = "12v_neg"
-    
-    print("waiting 5 seconds")
+    set_motor_pwm(0)
+
+    print("waiting 5 seconds before negative")
     time.sleep(5)
 
     print("starting positive loop")
@@ -100,6 +86,21 @@ try:
         avg_vel = get_avg_vel()
         data.append({'motor_cmd': cmd, 'ang_vel': avg_vel})
         print("avg_vel: ", avg_vel)
+
+    set_motor_pwm(0)
+    print("waiting 5 seconds before positive")
+    time.sleep(5)
+
+    for cmd in range(255, 0, -5):
+        print("cmd: ", cmd)
+        reset_avg_vel()
+        set_motor_pwm(cmd)
+        time.sleep(2)
+        avg_vel = get_avg_vel()
+        data.append({'motor_cmd': cmd, 'ang_vel': avg_vel})
+        print("avg_vel: ", avg_vel)
+
+    set_motor_pwm(0)
 
     save_to_csv('test.csv', data)
 
