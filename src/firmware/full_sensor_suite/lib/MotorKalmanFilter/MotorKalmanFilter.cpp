@@ -24,6 +24,7 @@ void MotorKalmanFilter::update(double dt, double enc_diff) {
   state_cov = (I - K * C) * state_cov_tmp;
 }
 
+// returns linear velocity of the wheel
 double MotorKalmanFilter::getVel() {
   return state(1) * (WHEEL_DIAMETER / 2.0);
 }

@@ -40,10 +40,9 @@ void MotorPID::begin() {
 void MotorPID::update(double dt, double cur_vel) {
   if (abs(vel_target) > 0) {
     diff = (vel_target - cur_vel);
-
     derivative = diff / dt;
 
-    if (abs(diff) > 0.2) {
+    if (abs(diff) > 1.0) {
       integral = 0;
     } else {
       integral += diff * dt;

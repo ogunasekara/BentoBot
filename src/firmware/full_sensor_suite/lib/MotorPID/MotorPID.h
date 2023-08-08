@@ -18,11 +18,9 @@ class MotorPID
     void begin();
     void update(double dt, double cur_vel);
     void setVel(double vel);
-    void setMotorCmd(int cmd);
+    void driveMotor(int motor_cmd);
       
   private:
-    void driveMotor(int motor_cmd);
-
     unsigned int MOTOR_IN1;
     unsigned int MOTOR_IN2;
     unsigned int MOTOR_PWM;
