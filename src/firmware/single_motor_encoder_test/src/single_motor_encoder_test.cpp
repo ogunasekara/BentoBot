@@ -1,3 +1,5 @@
+#include <Arduino.h>
+
 #define MOTOR_ENCA 2
 #define MOTOR_ENCB 1
 

@@ -104,6 +104,8 @@ double diff = 0.0;
 
 int motor_cmd = 0;
 
+void driveMotor(int motor_cmd);
+
 void pidUpdate(double dt) {
   if (abs(vel_target) > 0) {
     diff = (vel_target) - (state(1) * (WHEEL_DIAMETER / 2.0));

@@ -1,3 +1,5 @@
+#include <Arduino.h>
+
 // define wiring to arduino
 #define MOTOR_IN1 6
 #define MOTOR_IN2 5

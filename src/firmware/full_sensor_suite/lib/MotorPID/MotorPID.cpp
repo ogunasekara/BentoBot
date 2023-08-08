@@ -42,7 +42,12 @@ void MotorPID::update(double dt, double cur_vel) {
     diff = (vel_target - cur_vel);
 
     derivative = diff / dt;
-    integral += diff * dt;  // TODO: incorporate decay into this term
+
+    if (abs(diff) > 0.2) {
+      integral = 0;
+    } else {
+      integral += diff * dt;
+    }
 
     feed_forward = FF_A * exp(FF_B * abs(vel_target)); // calculated experimentally and fitted to exponential
     feed_forward = (vel_target / abs(vel_target)) * feed_forward; // match sign with vel_target

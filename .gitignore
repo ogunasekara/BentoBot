@@ -3,3 +3,4 @@ devel/
 .vscode/
 
 .DS_store
+.pio/
