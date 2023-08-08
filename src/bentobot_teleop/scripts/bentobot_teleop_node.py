@@ -10,7 +10,7 @@ def joy_callback(msg):
     left_analog_hori = msg.axes[2]
 
     lin_vel = 1.0 * left_analog_vert
-    ang_vel = 1.5 * left_analog_hori
+    ang_vel = 10 * left_analog_hori
 
     msg = Twist()
     msg.linear.x = lin_vel
