@@ -116,15 +116,19 @@ catkin_package(
 ## Specify additional locations of header files
 ## Your package locations should be listed before other locations
 include_directories(
-# include
+  include
   ${catkin_INCLUDE_DIRS}
   # ${Eigen3_INCLUDE_DIRS}
 )
 
 ## Declare a C++ library
-# add_library(${PROJECT_NAME}
-#   src/${PROJECT_NAME}/bentobot_odom.cpp
-# )
+add_library(KalmanFilter
+  src/KalmanFilter.cpp
+)
+
+target_link_libraries(KalmanFilter
+  ${Eigen3_LIBRARIES}
+)
 
 ## Add cmake target dependencies of the library
 ## as an example, code may need to be generated before libraries
@@ -206,7 +210,7 @@ include_directories(
 ## Add folders to be run by python nosetests
 # catkin_add_nosetests(test)
 
-add_executable(kalman_filter src/kalman_filter.cpp)
-target_link_libraries(kalman_filter ${catkin_LIBRARIES} ${eigen3_LIBRARIES})
+add_executable(odom_node src/odom_node.cpp)
+target_link_libraries(odom_node ${catkin_LIBRARIES} ${eigen3_LIBRARIES})
 # target_link_libraries(kalman_filter PRIVATE Eigen3::Eigen)
 # add_dependencies(talker beginner_tutorials_generate_messages_cpp)
