@@ -54,8 +54,11 @@
   <build_export_depend>roscpp</build_export_depend>
   <exec_depend>roscpp</exec_depend>  
 
-  <build_depend>eigen3</build_depend>
-  <exec_depend>eigen3</exec_depend>
+  <build_depend>eigen</build_depend>
+  <exec_depend>eigen</exec_depend>
+
+  <build_depend>bentobot_mcu_bridge</build_depend>
+  <exec_depend>bentobot_mcu_bridge</exec_depend>
 
   <!-- The export tag contains other, unspecified, tags -->
   <export>

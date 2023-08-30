@@ -1,11 +1,13 @@
-#include <eigen3/Eigen/Dense>
+#include <Eigen/Dense>
 #include <cmath>
-#include "bentobot_odom/KalmanFilter.h"
+#include <bentobot_odom/KalmanFilter.h>
 
+namespace Bentobot
+{
 KalmanFilter::KalmanFilter(
     Eigen::Matrix<double, 5, 5> process_noise_cov, 
     Eigen::Matrix<double, 2, 2> odom_noise_cov,
-    Eigen::Matrix<double, 1, 1> imu_noise_cov) : 
+    Eigen::Matrix<double, 1, 1> imu_noise_cov): 
     process_noise_cov{process_noise_cov},
     odom_noise_cov{odom_noise_cov},
     imu_noise_cov{imu_noise_cov}
@@ -85,4 +87,5 @@ void KalmanFilter::measurementIMUUpdate(double w) {
 
     state = state + K * (z - C_imu * state);
     covariance = (I - K * C_imu) * covariance;
+}
 }
