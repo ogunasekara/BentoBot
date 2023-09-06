@@ -8,33 +8,52 @@
 
 class BentobotOdomNode 
 {
+private:
+    ros::Subscriber mMcuInfoSub;
+    ros::Publisher mOdomPub;
+    Bentobot::KalmanFilter mKf;
+    ros::Time mPrevTime;
+
+    const double WHEEL_BASE_LENGTH = 0.16;
+
 public:
     BentobotOdomNode(
-        Eigen::Matrix<double, 5, 5> process_noise_cov,
-        Eigen::Matrix<double, 2, 2> odom_noise_cov,
-        Eigen::Matrix<double, 1, 1> imu_noise_cov):
-        nh_{},
-        mcu_info_sub_{nh_.subscribe("mcu_info", 1, &BentobotOdomNode::mcu_info_callback, this)},
-        odom_pub_{nh_.advertise<nav_msgs::Odometry>("odom", 5)},
-        kf_{new Bentobot::KalmanFilter(process_noise_cov, odom_noise_cov, imu_noise_cov)}
+        ros::NodeHandle *nh,
+        Eigen::Matrix<double, 5, 5> processNoiseCov,
+        Eigen::Matrix<double, 2, 2> odomNoiseCov,
+        Eigen::Matrix<double, 1, 1> imuNoiseCov):
+        mKf{Bentobot::KalmanFilter(processNoiseCov, odomNoiseCov, imuNoiseCov)}
     {
+        nh->subscribe("mcu_info", 1, &BentobotOdomNode::mcuInfoCallback, this);
+        mOdomPub = nh->advertise<nav_msgs::Odometry>("odom", 5);
+        mPrevTime = ros::Time::now();
     }
 
-    void mcu_info_callback(const bentobot_mcu_bridge::MCUInfo &msg)
+    void mcuInfoCallback(const bentobot_mcu_bridge::MCUInfo &msg)
     {
+        // find dt
+        ros::Duration dt = msg.header.stamp - mPrevTime;
+        mPrevTime = msg.header.stamp;
 
+        // state transition update
+        mKf.stateTransitionUpdate(dt.toSec());
+
+        // find v, w
+        double lin_vel = (msg.right_vel + msg.left_vel) / 2.0;
+        double ang_vel = (msg.right_vel - msg.left_vel) / WHEEL_BASE_LENGTH;
+
+        // measurement update with odom
+        mKf.measurementOdomUpdate(lin_vel, ang_vel);
+
+        // measurement update with imu
+        mKf.measurementIMUUpdate(msg.imu_ang_vel);
     }
-
-private:
-    ros::NodeHandle nh_;
-    ros::Subscriber mcu_info_sub_;
-    ros::Publisher odom_pub_;
-    Bentobot::KalmanFilter *kf_;
 };
 
 int main(int argc, char **argv)
 {
     ros::init(argc, argv, "bentobot_odom");
+    ros::NodeHandle nh;
 
     Eigen::Matrix<double, 5, 5> process_noise_cov;
     process_noise_cov.setIdentity();
@@ -45,7 +64,7 @@ int main(int argc, char **argv)
     Eigen::Matrix<double, 1, 1> imu_noise_cov;
     imu_noise_cov.setIdentity();
 
-    BentobotOdomNode node(process_noise_cov, odom_noise_cov, imu_noise_cov);
+    BentobotOdomNode node(&nh, process_noise_cov, odom_noise_cov, imu_noise_cov);
 
     ros::spin();
 

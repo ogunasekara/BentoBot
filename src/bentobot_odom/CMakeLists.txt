@@ -25,14 +25,6 @@ include_directories(
   ${EIGEN3_INCLUDE_DIRS}
 )
 
-# add Kalman Filter library
-add_library(KalmanFilter
-  src/KalmanFilter.cpp
-)
-target_link_libraries(KalmanFilter
-  ${EIGEN3_LIBRARIES}
-)
-
-add_executable(odom_node src/odom_node.cpp)
+add_executable(odom_node src/odom_node.cpp src/KalmanFilter.cpp)
 target_link_libraries(odom_node ${catkin_LIBRARIES} ${EIGEN3_LIBRARIES})
 add_dependencies(odom_node ${catkin_EXPORTED_TARGETS})
