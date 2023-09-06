@@ -40,6 +40,7 @@ if __name__ == '__main__':
             # publish if we have all measurements
             if len(measurements) == 3:
                 msg = MCUInfo()
+                msg.header.stamp = rospy.Time.now()
                 msg.left_vel = measurements[0]
                 msg.right_vel = measurements[1]
                 msg.imu_ang_vel = measurements[2]
