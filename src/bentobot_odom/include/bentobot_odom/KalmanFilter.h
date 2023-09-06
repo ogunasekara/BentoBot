@@ -13,6 +13,7 @@ public:
     void stateTransitionUpdate(double dt);
     void measurementOdomUpdate(double v, double w);
     void measurementIMUUpdate(double w);
+    Eigen::Matrix<double, 5, 1> getState();
 
 private:
     Eigen::Matrix<double, 5, 5> linearizeStateTransitionMatrix(double dt);

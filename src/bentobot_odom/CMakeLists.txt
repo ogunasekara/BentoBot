@@ -7,6 +7,7 @@ add_compile_options(-std=c++11)
 # find catkin specific packages
 find_package(catkin REQUIRED COMPONENTS
   roscpp
+  tf2
   nav_msgs
   bentobot_mcu_bridge
 )

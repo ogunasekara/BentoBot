@@ -5,5 +5,7 @@
 
     <node name="teleop" pkg="bentobot_teleop" type="bentobot_teleop_node.py"/>
 
+    <node name="odom" pkg="bentobot_odom" type="odom_node"/>
+
     <include file="$(find ldlidar_stl_ros)/launch/ld06.launch" />
 </launch>

@@ -88,4 +88,8 @@ void KalmanFilter::measurementIMUUpdate(double w) {
     state = state + K * (z - C_imu * state);
     covariance = (I - K * C_imu) * covariance;
 }
+
+Eigen::Matrix<double, 5, 1> KalmanFilter::getState() {
+    return state;
+}
 }
