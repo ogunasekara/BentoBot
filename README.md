@@ -23,3 +23,7 @@ ${workspaceFolder}/**",
 "/opt/ros/melodic/include/**",
 "/usr/include/**"
 ```
+
+## PlatformIO Setup
+
+I am utilizing PlatformIO as a convenient way to upload firmware to the Teensy 4.0 onboard BentoBot. All of the firmware is contained in the `src/firmware` folder. To upload 

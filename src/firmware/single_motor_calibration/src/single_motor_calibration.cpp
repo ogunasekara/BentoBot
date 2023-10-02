@@ -5,18 +5,18 @@
 /*--- MOTOR ENCODERS ---*/
 
 // left motor
-// #define MOTOR1_ENCA 11
-// #define MOTOR1_ENCB 12
-// #define MOTOR1_IN1 6
-// #define MOTOR1_IN2 5
-// #define MOTOR1_PWM 7
+#define MOTOR1_ENCA 11
+#define MOTOR1_ENCB 12
+#define MOTOR1_IN1 6
+#define MOTOR1_IN2 5
+#define MOTOR1_PWM 7
 
 // right motor
-#define MOTOR1_ENCA 10
-#define MOTOR1_ENCB 9
-#define MOTOR1_IN1 4
-#define MOTOR1_IN2 3
-#define MOTOR1_PWM 2
+// #define MOTOR1_ENCA 10
+// #define MOTOR1_ENCB 9
+// #define MOTOR1_IN1 4
+// #define MOTOR1_IN2 3
+// #define MOTOR1_PWM 2
 
 #define TICKS_PER_REV 680.0 // found through experimentation
 #define WHEEL_DIAMETER 0.068

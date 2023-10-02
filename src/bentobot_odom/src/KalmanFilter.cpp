@@ -1,5 +1,6 @@
 #include <Eigen/Dense>
 #include <cmath>
+#include <iostream>
 #include <bentobot_odom/KalmanFilter.h>
 
 namespace Bentobot
@@ -11,7 +12,17 @@ KalmanFilter::KalmanFilter(
     process_noise_cov{process_noise_cov},
     odom_noise_cov{odom_noise_cov},
     imu_noise_cov{imu_noise_cov}
-{}
+{    
+    state.setZero();
+    covariance.setZero();
+
+    C_odom.setZero();
+    C_odom(0, 3) = 1;
+    C_odom(1, 4) = 1;
+
+    C_imu.setZero();
+    C_imu(4) = 1;
+}
 
 Eigen::Matrix<double, 5, 5> KalmanFilter::linearizeStateTransitionMatrix(double dt) {
     double th = state(2);
@@ -19,16 +30,16 @@ Eigen::Matrix<double, 5, 5> KalmanFilter::linearizeStateTransitionMatrix(double 
     double w = state(4);
     
     Eigen::Matrix<double, 5, 5> A;
-    A.fill(0);
+    A.setZero();
 
     A(0, 0) = 1;
     A(0, 2) = (dt / 6.0) * (-1 * v * sin(th) - 4 * v * sin(th + ((dt / 2.0) * w)) - v * sin(th + (dt * w)));
-    A(0, 3) = (dt / 6.0) * (cos(th) + 4 * cos(th + ((dt / 2.0) * 2)) + cos(th + (dt * w)));
+    A(0, 3) = (dt / 6.0) * (cos(th) + 4 * cos(th + ((dt / 2.0) * w)) + cos(th + (dt * w)));
     A(0, 4) = (dt / 6.0) * (-2 * v * dt * sin(th + ((dt / 2.0) * w)) - v * dt * sin(th + (dt * w)));
 
     A(1, 1) = 1;
     A(1, 2) = (dt / 6.0) * (v * cos(th) + 4 * v * cos(th + ((dt / 2.0) * w)) + v * cos(th + (dt * w)));
-    A(1, 3) = (dt / 6.0) * (sin(th) + 4 * sin(th + ((dt / 2.0) * 2)) + sin(th + (dt * w)));
+    A(1, 3) = (dt / 6.0) * (sin(th) + 4 * sin(th + ((dt / 2.0) * w)) + sin(th + (dt * w)));
     A(1, 4) = (dt / 6.0) * (2 * v * dt * cos(th + ((dt / 2.0) * w)) + v * dt * cos(th + (dt * w)));
 
     A(2, 2) = 1;
@@ -83,7 +94,7 @@ void KalmanFilter::measurementIMUUpdate(double w) {
     I.setIdentity();
 
     Eigen::Matrix<double, 1, 1> z;
-    z(0) = 1;
+    z(0) = w;
 
     state = state + K * (z - C_imu * state);
     covariance = (I - K * C_imu) * covariance;

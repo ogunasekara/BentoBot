@@ -3,7 +3,7 @@ import threading
 import time
 import csv
 
-FILE_PREFIX = "right_wheel"
+FILE_PREFIX = "left_wheel_new"
 
 ser = serial.Serial('/dev/ttyACM0', 115200, timeout=1)
 data = [] # list of dicts, fields are motor_cmd, ang_vel

@@ -1,0 +1,10 @@
+odom : {
+  process_noise_x: 0.01,
+  process_noise_y: 0.01,
+  process_noise_th: 0.09,
+  process_noise_v: 0.01,
+  process_noise_w: 0.09,
+  measurement_noise_odom_v: 0.01,
+  measurement_noise_odom_w: 0.01,
+  measurement_noise_imu_w: 0.01
+}

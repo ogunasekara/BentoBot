@@ -129,10 +129,10 @@ void handleMotor2EncBChange() {
 /*--- MOTOR KF AND CONTROLLER ---*/
 
 MotorKalmanFilter motor1_filter = MotorKalmanFilter();
-MotorPID motor1_pid = MotorPID(MOTOR1_IN1, MOTOR1_IN2, MOTOR1_PWM, 300.0, 100.0, 0.0, 67.4, 0.841);
+MotorPID motor1_pid = MotorPID(MOTOR1_IN1, MOTOR1_IN2, MOTOR1_PWM, 300.0, 100.0, 0.0, 64.4, 0.807);
 
 MotorKalmanFilter motor2_filter = MotorKalmanFilter();
-MotorPID motor2_pid = MotorPID(MOTOR2_IN1, MOTOR2_IN2, MOTOR2_PWM, 300.0, 100.0, 0.0, 75.8, 0.794);
+MotorPID motor2_pid = MotorPID(MOTOR2_IN1, MOTOR2_IN2, MOTOR2_PWM, 300.0, 100.0, 0.0, 71.2, 0.774);
 
 /*--- INPUT PARSER ---*/
 
