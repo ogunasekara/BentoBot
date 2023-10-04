@@ -3,8 +3,11 @@
 #include <bentobot_odom/KalmanFilter.h>
 #include <bentobot_mcu_bridge/MCUInfo.h>
 #include <nav_msgs/Odometry.h>
+#include <geometry_msgs/TransformStamped.h>
 
 #include <Eigen/Dense>
+#include <tf2_ros/static_transform_broadcaster.h>
+#include <tf2_ros/transform_broadcaster.h>
 #include <tf2/LinearMath/Quaternion.h>
 
 class BentobotOdomNode 
@@ -12,6 +15,7 @@ class BentobotOdomNode
 private:
     ros::Subscriber mMcuInfoSub;
     ros::Publisher mOdomPub;
+
     Bentobot::KalmanFilter mKf;
     ros::Time mPrevTime;
 
@@ -28,6 +32,8 @@ public:
         mMcuInfoSub = nh->subscribe("/mcu_info", 1, &BentobotOdomNode::mcuInfoCallback, this);
         mOdomPub = nh->advertise<nav_msgs::Odometry>("odom", 5);
         mPrevTime = ros::Time::now();
+
+        //publishStaticTf();
     }
 
     void mcuInfoCallback(const bentobot_mcu_bridge::MCUInfo &msg)
@@ -53,6 +59,12 @@ public:
         // publish odom message
         Eigen::Matrix<double, 5, 1> state = mKf.getState();
 
+        publishOdom(state);
+        publishTf(state);
+    }
+private:
+    void publishOdom(Eigen::Matrix<double, 5, 1> state)
+    {
         tf2::Quaternion quat;
         quat.setRPY(0, 0, state(2));
         quat.normalize();
@@ -66,6 +78,56 @@ public:
         odom_msg.pose.pose.orientation.w = quat.getW();
 
         mOdomPub.publish(odom_msg);
+    }
+
+    // TODO: change this to a static publisher in launch file - wiki.ros.org/tf#static_transform_publisher
+    void publishStaticTf()
+    {
+        static tf2_ros::StaticTransformBroadcaster tfStaticBroadcaster;
+
+        geometry_msgs::TransformStamped tf;
+        
+        tf.header.stamp = ros::Time::now();
+        tf.header.frame_id = "base_link";
+        tf.child_frame_id = "base_laser";
+
+        tf.transform.translation.x = 0.043;
+        tf.transform.translation.y = 0;
+        tf.transform.translation.z = 0.168;
+
+        tf2::Quaternion q;
+        q.setRPY(0, 0, -1.5707);
+        tf.transform.rotation.x = q.x();
+        tf.transform.rotation.y = q.y();
+        tf.transform.rotation.z = q.z();
+        tf.transform.rotation.w = q.w();
+
+        tfStaticBroadcaster.sendTransform(tf);
+    }
+
+    void publishTf(Eigen::Matrix<double, 5, 1> state)
+    {
+        static tf2_ros::TransformBroadcaster tfBroadcaster;
+
+        geometry_msgs::TransformStamped tf;
+
+        tf.header.stamp = ros::Time::now();
+        tf.header.frame_id = "odom";
+        tf.child_frame_id = "base_link";
+
+        tf.transform.translation.x = state(0);
+        tf.transform.translation.y = state(1);
+        tf.transform.translation.z = 0;
+
+        tf2::Quaternion q;
+        q.setRPY(0, 0, state(2));
+
+        tf.transform.rotation.x = q.x();
+        tf.transform.rotation.y = q.y();
+        tf.transform.rotation.z = q.z();
+        tf.transform.rotation.w = q.w();
+
+        tfBroadcaster.sendTransform(tf);
     }
 };
 

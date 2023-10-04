@@ -8,6 +8,7 @@ add_compile_options(-std=c++11)
 find_package(catkin REQUIRED COMPONENTS
   roscpp
   tf2
+  tf2_ros
   nav_msgs
   bentobot_mcu_bridge
 )

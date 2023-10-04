@@ -1,15 +1,32 @@
 <launch>
+    <!-- Foxglove Studio Integration -->
+
+    <include file="$(find foxglove_bridge)/launch/foxglove_bridge.launch"/>
+
+    <!-- Robot Configuration -->
+    
     <rosparam file="$(find bentobot_bringup)/config/bentobot_config.yaml" />
+
+    <include file="$(find bentobot_bringup)/launch/description.launch" />
+    
+    <!-- Teleoperation -->
     
     <node name="joy" pkg="joy" type="joy_node"/>
 
-    <node name="mcu_bridge" pkg="bentobot_mcu_bridge" type="bentobot_mcu_bridge_node.py"/>
-
     <node name="teleop" pkg="bentobot_teleop" type="bentobot_teleop_node.py"/>
 
-    <node name="odom" pkg="bentobot_odom" type="odom_node" output="screen"/>
+    <!-- Sensors and Actuators -->
 
-    <include file="$(find ldlidar_stl_ros)/launch/ld06.launch" />
+    <node name="mcu_bridge" pkg="bentobot_mcu_bridge" type="bentobot_mcu_bridge_node.py"/>
 
-    <include file="$(find foxglove_bridge)/launch/foxglove_bridge.launch"/>
+    <include file="$(find bentobot_bringup)/launch/lidar.launch" />
+
+    <!-- Odometry -->
+
+    <node name="odom" pkg="bentobot_odom" type="odom_node"/>
+
+    <!-- Mapping -->
+    <node name="gmapping" pkg="gmapping" type="slam_gmapping" output="screen">
+        <rosparam file="$(find bentobot_bringup)/config/gmapping_config.yaml" />
+    </node>
 </launch>
