@@ -7,7 +7,7 @@ import time
 from bentobot_mcu_bridge.msg import MCUInfo
 from geometry_msgs.msg import Twist
 
-ser = serial.Serial('/dev/ttyACM0', 115200, timeout=1)
+ser = serial.Serial('/dev/serial/by-id/usb-Teensyduino_USB_Serial_14093920-if00', 115200, timeout=1)
 
 def parse_line(line):
     line = line.strip()

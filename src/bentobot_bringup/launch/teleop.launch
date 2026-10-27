@@ -11,7 +11,7 @@
     
     <!-- Teleoperation -->
     
-    <node name="joy" pkg="joy" type="joy_node"/>
+    <node name="joy" pkg="joy" type="joy_node" output="screen"/>
 
     <node name="teleop" pkg="bentobot_teleop" type="bentobot_teleop_node.py"/>
 
