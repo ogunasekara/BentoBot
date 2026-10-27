@@ -19,7 +19,7 @@ def joy_callback(msg):
     mcu_cmd_pub.publish(msg)
 
 if __name__ == '__main__':
-    rospy.init_node('bentobot_mcu_bridge')
+    rospy.init_node('bentobot_teleop')
 
     mcu_cmd_pub = rospy.Publisher('mcu_cmd', Twist, queue_size=10)
     joy_sub = rospy.Subscriber('joy', Joy, joy_callback)
