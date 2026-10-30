@@ -2,11 +2,19 @@
 
 /*--- ENCODER ---*/
 
-#define MOTOR_ENCA 11
-#define MOTOR_ENCB 12
-#define MOTOR_IN1 6
-#define MOTOR_IN2 5
-#define MOTOR_PWM 7
+// left motor
+// #define MOTOR_ENCA 11
+// #define MOTOR_ENCB 12
+// #define MOTOR_IN1 6
+// #define MOTOR_IN2 5
+// #define MOTOR_PWM 7
+
+// right motor
+#define MOTOR_ENCA 10
+#define MOTOR_ENCB 9
+#define MOTOR_IN1 4
+#define MOTOR_IN2 3
+#define MOTOR_PWM 2
 
 #define TICKS_PER_REV 680.0
 

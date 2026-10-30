@@ -3,9 +3,9 @@ import threading
 import time
 import csv
 
-FILE_PREFIX = "left_wheel_new"
+FILE_PREFIX = "right_wheel_lpf_new"
 
-ser = serial.Serial('/dev/ttyACM0', 115200, timeout=1)
+ser = serial.Serial('/dev/serial/by-id/usb-Teensyduino_USB_Serial_14093920-if00', 115200, timeout=1)
 data = [] # list of dicts, fields are motor_cmd, ang_vel
 
 #--- READING AND PARSING ---#
@@ -75,27 +75,34 @@ try:
 
     print("waiting 5 seconds before negative")
     time.sleep(5)
+    print("starting negative loop")
 
-    print("starting positive loop")
     # start from top and go down
-    for cmd in range(-255, 0, 5):
+    for cmd in range(0, -255, -5):
         print("cmd: ", cmd)
-        reset_avg_vel()
         set_motor_pwm(cmd)
-        time.sleep(2)
+        time.sleep(1)
+        reset_avg_vel()
+        #set_motor_pwm(cmd)
+        time.sleep(1)
         avg_vel = get_avg_vel()
         data.append({'motor_cmd': cmd, 'ang_vel': avg_vel})
         print("avg_vel: ", avg_vel)
 
+    # reset motor to 0
     set_motor_pwm(0)
+
     print("waiting 5 seconds before positive")
     time.sleep(5)
+    print("starting positive loop")
 
-    for cmd in range(255, 0, -5):
+    for cmd in range(0, 255, 5):
         print("cmd: ", cmd)
-        reset_avg_vel()
         set_motor_pwm(cmd)
-        time.sleep(2)
+        time.sleep(1)
+        reset_avg_vel()
+        #set_motor_pwm(cmd)
+        time.sleep(1)
         avg_vel = get_avg_vel()
         data.append({'motor_cmd': cmd, 'ang_vel': avg_vel})
         print("avg_vel: ", avg_vel)
