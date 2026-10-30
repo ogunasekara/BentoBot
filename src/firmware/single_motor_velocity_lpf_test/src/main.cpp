@@ -108,7 +108,7 @@ void setup() {
   analogWrite(MOTOR_PWM, 0);
 
   // initialize serial and wait to open
-  Serial.begin(9600);
+  Serial.begin(115200);
   while (!Serial) { ; }
 }
 
