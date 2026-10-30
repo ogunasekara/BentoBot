@@ -101,7 +101,8 @@ void setup() {
   pinMode(MOTOR_IN1, OUTPUT);
   pinMode(MOTOR_IN2, OUTPUT);
   pinMode(MOTOR_PWM, OUTPUT);
-  
+  analogWriteFrequency(MOTOR_PWM, 20000);
+ 
   // ensure motors are not moving
   digitalWrite(MOTOR_IN1, LOW);
   digitalWrite(MOTOR_IN2, LOW);
