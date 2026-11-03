@@ -14,7 +14,8 @@ MotorPID::MotorPID(
   double PID_I,
   double PID_D,
   MotorModel model,
-  double wheel_radius):
+  double wheel_radius,
+  double max_accel):
   MOTOR_IN1 { MOTOR_IN1 },
   MOTOR_IN2 { MOTOR_IN2 },
   MOTOR_PWM { MOTOR_PWM },
@@ -22,7 +23,8 @@ MotorPID::MotorPID(
   PID_I { PID_I },
   PID_D { PID_D },
   model { model },
-  wheel_radius { wheel_radius }
+  wheel_radius { wheel_radius },
+  max_accel { max_accel }
 {}
 
 void MotorPID::begin() {
@@ -39,6 +41,16 @@ void MotorPID::begin() {
 }
 
 void MotorPID::update(double dt, double cur_vel) {
+  // ramp the target toward the requested velocity
+  double max_step = max_accel * dt;
+  if (vel_goal > vel_target + max_step) {
+    vel_target += max_step;
+  } else if (vel_goal < vel_target - max_step) {
+    vel_target -= max_step;
+  } else {
+    vel_target = vel_goal;
+  }
+
   if (abs(vel_target) > 0) {
     diff = (vel_target - cur_vel);
     derivative = diff / dt;
@@ -66,7 +78,7 @@ void MotorPID::update(double dt, double cur_vel) {
 }
 
 void MotorPID::setVel(double vel) {
-  vel_target = vel;
+  vel_goal = vel;
 }
 
 void MotorPID::driveMotor(int motor_cmd) {
