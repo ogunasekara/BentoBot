@@ -42,6 +42,7 @@ void MotorPID::begin() {
 
 void MotorPID::update(double dt, double cur_vel) {
   // ramp the target toward the requested velocity
+  double prev_target = vel_target;
   double max_step = max_accel * dt;
   if (vel_goal > vel_target + max_step) {
     vel_target += max_step;
@@ -49,6 +50,11 @@ void MotorPID::update(double dt, double cur_vel) {
     vel_target -= max_step;
   } else {
     vel_target = vel_goal;
+  }
+
+  // drop accumulated error on stop and on direction change
+  if (prev_target * vel_target <= 0) {
+    integral = 0;
   }
 
   if (abs(vel_target) > 0) {
