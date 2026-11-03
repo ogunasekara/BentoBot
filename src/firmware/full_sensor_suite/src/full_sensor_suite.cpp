@@ -129,13 +129,17 @@ void handleMotor2EncBChange() {
 
 /*--- MOTOR FILTER AND CONTROLLER ---*/
 
+#define MOTOR_P 1.0
+#define MOTOR_I 0.0
+#define MOTOR_D 0.0
+
 MotorLowPassFilter motor1_filter = MotorLowPassFilter();
 MotorModel motor1_model = MotorModel(131.0, 2.05);
-MotorPID motor1_pid = MotorPID(MOTOR1_IN1, MOTOR1_IN2, MOTOR1_PWM, 300.0, 100.0, 0.0, motor1_model, WHEEL_DIAMETER / 2.0);
+MotorPID motor1_pid = MotorPID(MOTOR1_IN1, MOTOR1_IN2, MOTOR1_PWM, MOTOR_P, MOTOR_I, MOTOR_D, motor1_model, WHEEL_DIAMETER / 2.0);
 
 MotorLowPassFilter motor2_filter = MotorLowPassFilter();
 MotorModel motor2_model = MotorModel(132.0, 2.08);
-MotorPID motor2_pid = MotorPID(MOTOR2_IN1, MOTOR2_IN2, MOTOR2_PWM, 300.0, 100.0, 0.0, motor2_model, WHEEL_DIAMETER / 2.0);
+MotorPID motor2_pid = MotorPID(MOTOR2_IN1, MOTOR2_IN2, MOTOR2_PWM, MOTOR_P, MOTOR_I, MOTOR_D, motor2_model, WHEEL_DIAMETER / 2.0);
 
 /*--- INPUT PARSER ---*/
 
