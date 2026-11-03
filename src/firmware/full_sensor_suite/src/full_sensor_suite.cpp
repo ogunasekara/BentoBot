@@ -1,6 +1,6 @@
 #include <BasicLinearAlgebra.h>
 #include <Adafruit_MPU6050.h>
-#include <MotorKalmanFilter.h>
+#include <MotorLowPassFilter.h>
 #include <MotorModel.h>
 #include <MotorPID.h>
 
@@ -127,13 +127,13 @@ void handleMotor2EncBChange() {
   }
 }
 
-/*--- MOTOR KF AND CONTROLLER ---*/
+/*--- MOTOR FILTER AND CONTROLLER ---*/
 
-MotorKalmanFilter motor1_filter = MotorKalmanFilter();
+MotorLowPassFilter motor1_filter = MotorLowPassFilter();
 MotorModel motor1_model = MotorModel(131.0, 2.05);
 MotorPID motor1_pid = MotorPID(MOTOR1_IN1, MOTOR1_IN2, MOTOR1_PWM, 300.0, 100.0, 0.0, motor1_model, WHEEL_DIAMETER / 2.0);
 
-MotorKalmanFilter motor2_filter = MotorKalmanFilter();
+MotorLowPassFilter motor2_filter = MotorLowPassFilter();
 MotorModel motor2_model = MotorModel(132.0, 2.08);
 MotorPID motor2_pid = MotorPID(MOTOR2_IN1, MOTOR2_IN2, MOTOR2_PWM, 300.0, 100.0, 0.0, motor2_model, WHEEL_DIAMETER / 2.0);
 

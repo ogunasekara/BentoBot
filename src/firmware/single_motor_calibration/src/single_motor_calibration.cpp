@@ -1,5 +1,5 @@
 #include <Arduino.h>
-#include <MotorKalmanFilter.h>
+#include <MotorLowPassFilter.h>
 #include <MotorModel.h>
 #include <MotorPID.h>
 
@@ -67,9 +67,9 @@ void handleMotor1EncBChange() {
   }
 }
 
-/*--- MOTOR KF AND CONTROLLER ---*/
+/*--- MOTOR FILTER AND CONTROLLER ---*/
 
-MotorKalmanFilter motor1_filter = MotorKalmanFilter();
+MotorLowPassFilter motor1_filter = MotorLowPassFilter();
 MotorPID motor1_pid = MotorPID(MOTOR1_IN1, MOTOR1_IN2, MOTOR1_PWM, 300.0, 100.0, 0.0, MotorModel(MOTOR_CUTOFF, MOTOR_SLOPE), WHEEL_DIAMETER / 2.0);
 
 /*--- INPUT PARSER ---*/
