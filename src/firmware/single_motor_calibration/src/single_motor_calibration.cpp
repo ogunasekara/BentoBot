@@ -13,6 +13,9 @@
 #define MOTOR1_PWM 7
 #define MOTOR_CUTOFF 131.0
 #define MOTOR_SLOPE 2.05
+#define MOTOR_P 1.0
+#define MOTOR_I 0.0
+#define MOTOR_D 0.0
 
 // right motor
 // #define MOTOR1_ENCA 10
@@ -70,7 +73,7 @@ void handleMotor1EncBChange() {
 /*--- MOTOR FILTER AND CONTROLLER ---*/
 
 MotorLowPassFilter motor1_filter = MotorLowPassFilter();
-MotorPID motor1_pid = MotorPID(MOTOR1_IN1, MOTOR1_IN2, MOTOR1_PWM, 300.0, 100.0, 0.0, MotorModel(MOTOR_CUTOFF, MOTOR_SLOPE), WHEEL_DIAMETER / 2.0);
+MotorPID motor1_pid = MotorPID(MOTOR1_IN1, MOTOR1_IN2, MOTOR1_PWM, MOTOR_P, MOTOR_I, MOTOR_D, MotorModel(MOTOR_CUTOFF, MOTOR_SLOPE), WHEEL_DIAMETER / 2.0);
 
 /*--- INPUT PARSER ---*/
 
