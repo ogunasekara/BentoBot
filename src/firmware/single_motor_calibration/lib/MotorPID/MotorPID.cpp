@@ -2,6 +2,7 @@
 #include "MotorPID.h"
 
 #define PWM_MAX 255
+#define PWM_FREQUENCY 20000
 #define INTEGRAL_DECAY 0.01
 
 
@@ -29,6 +30,7 @@ void MotorPID::begin() {
   pinMode(MOTOR_IN1, OUTPUT);
   pinMode(MOTOR_IN2, OUTPUT);
   pinMode(MOTOR_PWM, OUTPUT);
+  analogWriteFrequency(MOTOR_PWM, PWM_FREQUENCY);
   
   // ensure motors are not moving
   digitalWrite(MOTOR_IN1, LOW);
