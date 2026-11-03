@@ -1,5 +1,6 @@
 #include <Arduino.h>
 #include <MotorKalmanFilter.h>
+#include <MotorModel.h>
 #include <MotorPID.h>
 
 /*--- MOTOR ENCODERS ---*/
@@ -10,6 +11,8 @@
 #define MOTOR1_IN1 6
 #define MOTOR1_IN2 5
 #define MOTOR1_PWM 7
+#define MOTOR_CUTOFF 131.0
+#define MOTOR_SLOPE 2.05
 
 // right motor
 // #define MOTOR1_ENCA 10
@@ -17,6 +20,8 @@
 // #define MOTOR1_IN1 4
 // #define MOTOR1_IN2 3
 // #define MOTOR1_PWM 2
+// #define MOTOR_CUTOFF 132.0
+// #define MOTOR_SLOPE 2.08
 
 #define TICKS_PER_REV 680.0 // found through experimentation
 #define WHEEL_DIAMETER 0.068
@@ -65,11 +70,11 @@ void handleMotor1EncBChange() {
 /*--- MOTOR KF AND CONTROLLER ---*/
 
 MotorKalmanFilter motor1_filter = MotorKalmanFilter();
-MotorPID motor1_pid = MotorPID(MOTOR1_IN1, MOTOR1_IN2, MOTOR1_PWM, 300.0, 100.0, 0.0, 23.0, 1.5);
+MotorPID motor1_pid = MotorPID(MOTOR1_IN1, MOTOR1_IN2, MOTOR1_PWM, 300.0, 100.0, 0.0, MotorModel(MOTOR_CUTOFF, MOTOR_SLOPE), WHEEL_DIAMETER / 2.0);
 
 /*--- INPUT PARSER ---*/
 
-// input: "[v] [w]\n" where [v] is linear vel and [w] is angular vel
+// input: "[v]\n" where [v] is the target wheel velocity in m/s
 
 String cmd;
 void parseInput() {
@@ -77,7 +82,7 @@ void parseInput() {
     cmd = Serial.readStringUntil('\n');
     cmd.trim();
     // Serial.println(cmd);
-    motor1_pid.driveMotor(cmd.toFloat());
+    motor1_pid.setVel(cmd.toFloat());
   }
 }
 
@@ -120,6 +125,7 @@ void loop() {
 
     // controller update
     motor1_vel = motor1_filter.getVel();
+    motor1_pid.update(dt, motor1_vel);
 
     // reset enc counts
     prev_motor1_enc = motor1_enc_count;

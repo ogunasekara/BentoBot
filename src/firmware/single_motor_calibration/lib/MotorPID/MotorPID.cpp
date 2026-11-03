@@ -1,7 +1,6 @@
 #include "Arduino.h"
 #include "MotorPID.h"
 
-#define PWM_MIN 10
 #define PWM_MAX 255
 #define INTEGRAL_DECAY 0.01
 
@@ -13,16 +12,16 @@ MotorPID::MotorPID(
   double PID_P,
   double PID_I,
   double PID_D,
-  double FF_A,
-  double FF_B):
+  MotorModel model,
+  double wheel_radius):
   MOTOR_IN1 { MOTOR_IN1 },
   MOTOR_IN2 { MOTOR_IN2 },
   MOTOR_PWM { MOTOR_PWM },
   PID_P { PID_P },
   PID_I { PID_I },
   PID_D { PID_D },
-  FF_A { FF_A },
-  FF_B { FF_B }
+  model { model },
+  wheel_radius { wheel_radius }
 {}
 
 void MotorPID::begin() {
@@ -42,17 +41,21 @@ void MotorPID::update(double dt, double cur_vel) {
     diff = (vel_target - cur_vel);
     derivative = diff / dt;
 
-    if (abs(diff) > 1.0) {
+    if (abs(diff) > 0.1) {
       integral = 0;
     } else {
       integral += diff * dt;
     }
 
-    feed_forward = FF_A * exp(FF_B * abs(vel_target)); // calculated experimentally and fitted to exponential
-    feed_forward = (vel_target / abs(vel_target)) * feed_forward; // match sign with vel_target
+    feed_forward = model.getPWMFeedForward(vel_target / wheel_radius); // signed PWM from motor model
 
-    motor_cmd = ((feed_forward) + (PID_P * diff) + (PID_I * integral) + (PID_D * derivative));
-    motor_cmd = (motor_cmd / abs(motor_cmd)) * min(PWM_MAX, abs(motor_cmd));  // upper bound
+    double pwm = feed_forward + (PID_P * diff) + (PID_I * integral) + (PID_D * derivative);
+
+    if (abs(pwm) < model.getCutoff()) {
+      motor_cmd = 0;  // below the motor's deadband
+    } else {
+      motor_cmd = (pwm > 0 ? 1 : -1) * min((double)PWM_MAX, abs(pwm));  // upper bound
+    }
   } else {
     motor_cmd = 0;
   }
@@ -65,8 +68,8 @@ void MotorPID::setVel(double vel) {
 }
 
 void MotorPID::driveMotor(int motor_cmd) {
-  // stop motor if motor cmd too low
-  if (abs(motor_cmd) <= PWM_MIN) {
+  // stop motor if motor cmd below the model cutoff
+  if (abs(motor_cmd) < model.getCutoff()) {
     digitalWrite(MOTOR_IN1, LOW);
     digitalWrite(MOTOR_IN2, LOW);
   } else if (motor_cmd > 0) {

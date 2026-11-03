@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Arduino.h"
+#include "MotorModel.h"
 
 class MotorPID 
 {
@@ -12,8 +13,8 @@ class MotorPID
       double PID_P,
       double PID_I,
       double PID_D,
-      double FF_A,
-      double FF_B
+      MotorModel model,
+      double wheel_radius
     );
     void begin();
     void update(double dt, double cur_vel);
@@ -28,8 +29,8 @@ class MotorPID
     double PID_P;
     double PID_I;
     double PID_D;
-    double FF_A; // feed forward multiplier
-    double FF_B; // feed forward exponential multiplier
+    MotorModel model; // PWM feed forward model
+    double wheel_radius; // m, converts wheel velocity to angular velocity for the model
 
     double integral;
     double derivative;
