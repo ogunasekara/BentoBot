@@ -1,0 +1,30 @@
+x-robot: &robot
+  image: bentobot:foxy
+  # DDS discovery and the rosbridge websocket (port 9090) need the host network
+  network_mode: host
+  ipc: host
+  # the Teensy, LD06 and joystick device nodes come and go when replugged,
+  # so pass all of /dev through instead of listing devices
+  privileged: true
+  volumes:
+    - /dev:/dev
+
+services:
+  # runs the full bringup (teleop.launch.py) from the code baked into the image
+  bentobot:
+    <<: *robot
+    build: .
+
+  # development shell: src/ is bind-mounted, rebuild with `colcon build`
+  dev:
+    <<: *robot
+    profiles: ["dev"]
+    volumes:
+      - /dev:/dev
+      - ./src:/bentobot_ws/src
+      - ./build:/bentobot_ws/build
+      - ./install:/bentobot_ws/install
+      - ./log:/bentobot_ws/log
+    stdin_open: true
+    tty: true
+    command: bash

@@ -6,23 +6,35 @@ Bentobot is a mobile robotics platform to test custom C++ ROS packages for mobil
 
 ## Software Dependencies
 
-- ROS Melodic
+- ROS 2 Foxy, run in Docker (see below)
 - Eigen3
+
+## Running on the Robot (Jetson Nano)
+
+The ROS 2 stack runs in a Docker container (`ros:foxy-ros-base`, Ubuntu 20.04 arm64), so the Jetson can stay on its stock JetPack 4.x / Ubuntu 18.04 image.
+
+One-time setup on the Jetson:
+
+1. JetPack ships Docker. Add yourself to the `docker` group: `sudo usermod -aG docker $USER`, then log out and back in.
+2. Install the [Docker Compose v2 plugin](https://docs.docker.com/compose/install/linux/#install-the-plugin-manually) for `aarch64`. The `docker-compose` in the Ubuntu 18.04 apt repo is too old for `docker-compose.yml`.
+
+Build and run:
+
+```
+docker compose build                 # builds the image, including colcon build
+docker compose up                    # runs teleop.launch.py
+docker compose run --rm dev          # dev shell with src/ bind-mounted; run `colcon build` inside
+```
+
+The container uses the host network and has access to all of `/dev`, so the Teensy, LD06 and joystick don't need to be listed individually.
+
+The image can also be built on an arm64 machine (e.g. an Apple Silicon Mac) and copied over with `docker save bentobot:foxy | ssh <robot> docker load`.
+
+To view the robot in [Foxglove Studio](https://foxglove.dev/), open a **Rosbridge** connection to `ws://<robot>:9090`. `foxglove_bridge` was never released for Foxy, so the robot runs `rosbridge_server` instead.
 
 ## Remote Development Setup
 
-I currently use the [Remote - SSH](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-ssh) VSCode extension to remotely develop on the robot. To use this, ensure SSH is setup on the robot and utilize Remote - SSH's connect to host to connect to the robot.
-
-To ensure that C++ libraries show up properly in the remote development environment, install the [C/C++ Extension Pack](https://marketplace.visualstudio.com/items?itemName=ms-vscode.cpptools-extension-pack) on VSCode.
-
-In the auto-generated `.vscode/c_pp_properties.json` file, ensure the includePath has the following directories:
-
-```
-${workspaceFolder}/**",
-"<repository path>/devel/include/**",
-"/opt/ros/melodic/include/**",
-"/usr/include/**"
-```
+I currently use the [Remote - SSH](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-ssh) VSCode extension to remotely develop on the robot. To use this, ensure SSH is setup on the robot and utilize Remote - SSH's connect to host to connect to the robot. Build and run the code inside the `dev` container described above.
 
 ## PlatformIO Setup
 
