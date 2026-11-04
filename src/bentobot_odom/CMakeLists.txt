@@ -1,32 +1,36 @@
-cmake_minimum_required(VERSION 3.0.2)
+cmake_minimum_required(VERSION 3.5)
 project(bentobot_odom)
 
-## Compile as C++11, supported in ROS Kinetic and newer
-add_compile_options(-std=c++11)
+if(NOT CMAKE_CXX_STANDARD)
+  set(CMAKE_CXX_STANDARD 14)
+endif()
 
-# find catkin specific packages
-find_package(catkin REQUIRED COMPONENTS
-  roscpp
-  tf2
-  tf2_ros
-  nav_msgs
-  bentobot_mcu_bridge
-)
-
-# find external packages
+find_package(ament_cmake REQUIRED)
+find_package(rclcpp REQUIRED)
+find_package(tf2 REQUIRED)
+find_package(tf2_ros REQUIRED)
+find_package(nav_msgs REQUIRED)
+find_package(geometry_msgs REQUIRED)
+find_package(bentobot_interfaces REQUIRED)
 find_package(Eigen3 REQUIRED)
-
-catkin_package(
-  CATKIN_DEPENDS roscpp bentobot_mcu_bridge
-  DEPENDS EIGEN3
-)
 
 include_directories(
   include
-  ${catkin_INCLUDE_DIRS}
   ${EIGEN3_INCLUDE_DIRS}
 )
 
 add_executable(odom_node src/odom_node.cpp src/KalmanFilter.cpp)
-target_link_libraries(odom_node ${catkin_LIBRARIES} ${EIGEN3_LIBRARIES})
-add_dependencies(odom_node ${catkin_EXPORTED_TARGETS})
+ament_target_dependencies(odom_node
+  rclcpp
+  tf2
+  tf2_ros
+  nav_msgs
+  geometry_msgs
+  bentobot_interfaces
+)
+
+install(TARGETS odom_node
+  DESTINATION lib/${PROJECT_NAME}
+)
+
+ament_package()
