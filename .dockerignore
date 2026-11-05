@@ -5,3 +5,7 @@ install
 log
 devel
 src/firmware
+
+# ROS 1 lidar driver that may be left over from the Melodic setup; the image
+# builds ldlidar_stl_ros2 instead
+src/ldlidar_stl_ros

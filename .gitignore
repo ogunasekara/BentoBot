@@ -6,3 +6,5 @@ devel/
 
 .DS_store
 .pio/
+
+src/ldlidar_stl_ros/
