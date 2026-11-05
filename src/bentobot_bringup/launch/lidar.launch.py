@@ -18,7 +18,7 @@ def generate_launch_description():
             output='screen',
             parameters=[{
                 'product_name': 'LDLiDAR_LD06',
-                'topic_name': LaunchConfiguration('topic_name'),
+                'topic_name': 'scan_raw',
                 'frame_id': LaunchConfiguration('frame_id'),
                 'port_name': LaunchConfiguration('port_name'),
                 'port_baudrate': 230400,
@@ -30,5 +30,13 @@ def generate_launch_description():
                 'angle_crop_min': 135.0,
                 'angle_crop_max': 225.0,
             }],
+        ),
+
+        # the driver's beam count varies scan to scan, which slam_toolbox rejects
+        Node(
+            package='bentobot_laser',
+            executable='scan_resampler_node',
+            name='scan_resampler',
+            remappings=[('scan', LaunchConfiguration('topic_name'))],
         ),
     ])

@@ -9,6 +9,7 @@
   <buildtool_depend>ament_cmake</buildtool_depend>
 
   <exec_depend>bentobot_mcu_bridge</exec_depend>
+  <exec_depend>bentobot_laser</exec_depend>
   <exec_depend>bentobot_odom</exec_depend>
   <exec_depend>bentobot_teleop</exec_depend>
   <exec_depend>joy_linux</exec_depend>
