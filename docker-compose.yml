@@ -1,16 +1,31 @@
 x-robot: &robot
   image: bentobot:foxy
-  # DDS discovery and the rosbridge websocket (port 9090) need the host network
+  # DDS discovery, rosbridge (9090) and the web UI (8080) need the host network
   network_mode: host
   ipc: host
   # the Teensy, LD06 and joystick device nodes come and go when replugged,
   # so pass all of /dev through instead of listing devices
   privileged: true
+  # tini as PID 1 forwards signals, and ros2 launch shuts down cleanly on
+  # SIGINT (without these, `docker compose down` waited 10 s and SIGKILLed,
+  # which can cut a mapping run off mid-save)
+  init: true
+  stop_signal: SIGINT
+  environment:
+    # web UI port and the interface it binds to (an interface name or an IP,
+    # 0.0.0.0 for all interfaces)
+    BENTOBOT_WEB_PORT: ${BENTOBOT_WEB_PORT:-8080}
+    BENTOBOT_WEB_IFACE: ${BENTOBOT_WEB_IFACE:-wlan0}
   volumes:
     - /dev:/dev
+    # saved maps and controller profiles survive image rebuilds
+    - ./data:/bentobot_ws/data
+    # host BlueZ (bluetoothd) for controller pairing from the web UI
+    - /var/run/dbus:/var/run/dbus
 
 services:
-  # runs the full bringup (teleop.launch.py) from the code baked into the image
+  # full bringup from the code baked into the image: base.launch.py (drivers,
+  # teleop, odom, web UI) and a mapping run started through the web UI
   bentobot:
     <<: *robot
     build: .
@@ -21,6 +36,8 @@ services:
     profiles: ["dev"]
     volumes:
       - /dev:/dev
+      - ./data:/bentobot_ws/data
+      - /var/run/dbus:/var/run/dbus
       - ./src:/bentobot_ws/src
       - ./build:/bentobot_ws/build
       - ./install:/bentobot_ws/install

@@ -8,3 +8,8 @@ devel/
 .pio/
 
 src/ldlidar_stl_ros/
+
+# robot data (saved maps, controller profiles) and frontend build output
+data/
+frontend/node_modules/
+frontend/dist/
