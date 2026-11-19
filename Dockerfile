@@ -1,6 +1,7 @@
 # ---- frontend: built with Node, only dist/ is copied into the robot image ----
-# Runs on the build machine's native platform; the output is plain static files.
-FROM --platform=$BUILDPLATFORM node:20-bookworm-slim AS frontend
+# No --platform=$BUILDPLATFORM here: JetPack's Docker has no buildx, and the
+# classic builder leaves $BUILDPLATFORM empty, which fails to parse.
+FROM node:20-bookworm-slim AS frontend
 WORKDIR /frontend
 COPY frontend/package.json frontend/package-lock.json ./
 RUN npm ci --no-audit --no-fund
