@@ -104,6 +104,9 @@ private:
         odom_msg.pose.pose.orientation.y = quat.getY();
         odom_msg.pose.pose.orientation.z = quat.getZ();
         odom_msg.pose.pose.orientation.w = quat.getW();
+        // EKF velocity estimate, in the base_link frame (child_frame_id)
+        odom_msg.twist.twist.linear.x = state(3);
+        odom_msg.twist.twist.angular.z = state(4);
 
         mOdomPub->publish(odom_msg);
     }
