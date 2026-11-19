@@ -16,6 +16,10 @@
   <exec_depend>ldlidar_stl_ros2</exec_depend>
   <exec_depend>rosbridge_server</exec_depend>
   <exec_depend>slam_toolbox</exec_depend>
+  <exec_depend>bentobot_web</exec_depend>
+  <exec_depend>nav2_amcl</exec_depend>
+  <exec_depend>nav2_lifecycle_manager</exec_depend>
+  <exec_depend>nav2_map_server</exec_depend>
   <exec_depend>tf2_ros</exec_depend>
 
   <export>
